@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { auth } from '../../firebase';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
+import { toast } from 'react-toastify';
+
 
 // below funtion is used to initialze variable (email) & also contains other function (handlesubmit) within.
 
@@ -13,8 +13,11 @@ const Register = () => {
 
     const handlesubmit = async (e) => {
         e.preventDefault();
-        console.log("env --", process.env.REACT_APP_REGISTER_REDIRECT_URL);
-
+        //console.log("env --", process.env.REACT_APP_REGISTER_REDIRECT_URL);
+        if (!email) {
+            toast.error("Email is Required for registration");
+            return;
+        }
         //using env file for link instead of hard coding for safety.
 
         const config = {
@@ -50,7 +53,6 @@ const Register = () => {
             <div className="row">
                 <div className="col-md-6 offset-md-3">
                     <h4>Register</h4>
-                    <ToastContainer />
                     {RegisterForm()}
                 </div>
             </div>
