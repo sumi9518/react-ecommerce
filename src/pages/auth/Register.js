@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth } from '../../firebase';
 import { toast } from 'react-toastify';
-
+import { useSelector } from 'react-redux';
 
 // below funtion is used to initialze variable (email) & also contains other function (handlesubmit) within.
 
-const Register = () => {
+const Register = ({ history }) => {
 
     const [email, setEmail] = useState("");          //initializing
+    const { user } = useSelector((state) => ({ ...state }));
+
+    useEffect(() => {
+        if (user && user.token) {
+            history.push("/");
+        }
+    }, [user]); //as soon as we have user or user changes we redirect (useEffect runs when comp mounts)
+
 
     //In below function  data is passed and result in sending automated email to user.
 
@@ -41,9 +49,11 @@ const Register = () => {
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Please enter your email"
                 autoFocus
             />
-            <button type="submit" className="btn btn-raised" >
+            < br />
+            <button type="submit" className="btn btn-primary" >
                 Register
             </button>
         </form>

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Menu } from 'antd';
-import { HomeOutlined, SettingOutlined, LoginOutlined, UserAddOutlined } from '@ant-design/icons';
+import { HomeOutlined, SettingOutlined, LoginOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';   //curly braces used to destructure as link could be dependent
+import firebase from 'firebase';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 const { SubMenu, Item } = Menu;                                      // Menu.Submenu, menu.item
 
@@ -9,31 +12,60 @@ const Header = () => {                                          //Funtional comp
 
     const [current, setCurrent] = useState("Home");            //This way setting in function component & class component is different
 
+    let dispatch = useDispatch();
+    let history = useHistory();
+    let { user } = useSelector((state) => ({ ...state }));                  // use Selector is used to get state
+
     const handleClick = (e) => {                                   //on click event e will be catched in function
         setCurrent(e.key);
     };
 
+    const Logout = () => {
+        firebase.auth().signOut();
+        dispatch({
+            type: "Logout",
+            payload: null,
+
+        });
+
+        history.push("/login");
+    }
+
     return (
+        <div>
 
-        <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal" >
-            <Item key="Home" icon={<HomeOutlined />} >
-                <Link to="/">Home</Link>
-            </Item>
-            <SubMenu key="subMenu" icon={<SettingOutlined />} title="User Name">
-                <Item key="7">Option 7</Item>
-                <Item key="8">Option 8</Item>
-            </SubMenu>
+            <Menu key="Menu" onClick={handleClick} selectedKeys={[current]} mode="horizontal">
+                <Item key="Home" icon={<HomeOutlined />} >
+                    <Link to="/">Home</Link>
+                </Item>
+                {
+                    !user && (
+                        <Item key="Registered" icon={<UserAddOutlined />} className="float-right">
+                            <Link to="/Register">Registered</Link>
+                        </Item>
+                    )
+                }
 
-            <Item key="Registered" icon={<UserAddOutlined />} className="float-right">
-                <Link to="/Register">Registered</Link>
-            </Item>
+                {
+                    !user && (
+                        <Item key="Login" icon={<UserOutlined />} className="float-right">
+                            <Link to="/Login">Login</Link>
+                        </Item>
+                    )
+                }
+                {
+                    user && (
+                        <SubMenu key="userdata" icon={<SettingOutlined />} title={user.email && user.email.split('@')[0]} >
+                            <Item key="7">Option 7</Item>
+                            <Item key="8">Option 8</Item>
+                            <Item icon={<LoginOutlined />} onClick={Logout}>Logout</Item>
+                        </SubMenu>
+                    )
+                }
 
-            <Item key="Login" icon={<LoginOutlined />} className="float-right" >
-                <Link to="/Login">Login</Link>
-            </Item>
 
-
-        </Menu>
+            </Menu>
+        </div>
 
     );
 };

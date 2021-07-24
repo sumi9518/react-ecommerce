@@ -41,13 +41,12 @@ const RegisterComplete = ({ history }) => {
                 let user = auth.currentUser;
                 await user.updatePassword(password);
                 const idTokenResult = await user.getIdTokenResult();
-                console.log('user', user, 'idtoken', idTokenResult);
+                //console.log('user', user, 'idtoken', idTokenResult);
                 // redux store
 
 
                 //redirect user
-                // history.push('/');
-
+                history.push('/');
             }
 
         } catch (error) {
@@ -81,7 +80,7 @@ const RegisterComplete = ({ history }) => {
                 autoFocus
             />
             <br />
-            <button type="submit" className="btn btn-raised" >
+            <button type="submit" className="btn btn-primary" >
                 Complete Registeration
             </button>
         </form>
